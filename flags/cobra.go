@@ -142,6 +142,38 @@ func (m *CobraMapper) BoolP(name, shorthand string, value bool, usage string, ar
 	return m.boolVarP(nil, v, name, shorthand, value, usage, args...)
 }
 
+// String
+func (f cobraFlag) GetString() (string, bool) {
+	var v string
+
+	p, ok := f.Raw().(*string)
+	if ok {
+		ok = f.Changed()
+		v = *p
+	}
+
+	return v, ok
+}
+
+func (m *CobraMapper) stringVarP(out *string, v *string, name, shorthand string, value string, usage string, args ...interface{}) *CobraMapper {
+	if len(usage) > 0 && len(args) > 0 {
+		usage = fmt.Sprintf(usage, args...)
+	}
+	*v = value
+	m.set.StringVarP(v, name, shorthand, value, usage)
+	return m.addFlag(name, v, out)
+}
+
+func (m *CobraMapper) StringVarP(out *string, name, shorthand string, value string, usage string, args ...interface{}) *CobraMapper {
+	v := new(string)
+	return m.stringVarP(out, v, name, shorthand, value, usage, args...)
+}
+
+func (m *CobraMapper) StringP(name, shorthand string, value string, usage string, args ...interface{}) *CobraMapper {
+	v := new(string)
+	return m.stringVarP(nil, v, name, shorthand, value, usage, args...)
+}
+
 // Duration
 func (f cobraFlag) GetDuration() (time.Duration, bool) {
 	var v time.Duration
