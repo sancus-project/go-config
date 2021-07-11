@@ -107,6 +107,35 @@ func (m *CobraMapper) Uint16P(name, shorthand string, value uint16, usage string
 	return m.uint16VarP(nil, v, name, shorthand, value, usage, args...)
 }
 
+// Bool
+func (f cobraFlag) GetBool() (bool, bool) {
+	if p, ok := f.Raw().(*bool); ok {
+		ok = f.Changed()
+		return *p, ok
+	} else {
+		return false, false
+	}
+}
+
+func (m *CobraMapper) boolVarP(out *bool, v *bool, name, shorthand string, value bool, usage string, args ...interface{}) *CobraMapper {
+	if len(usage) > 0 && len(args) > 0 {
+		usage = fmt.Sprintf(usage, args...)
+	}
+	*v = value
+	m.set.BoolVarP(v, name, shorthand, value, usage)
+	return m.addFlag(name, v, out)
+}
+
+func (m *CobraMapper) BoolVarP(out *bool, name, shorthand string, value bool, usage string, args ...interface{}) *CobraMapper {
+	v := new(bool)
+	return m.boolVarP(out, v, name, shorthand, value, usage, args...)
+}
+
+func (m *CobraMapper) BoolP(name, shorthand string, value bool, usage string, args ...interface{}) *CobraMapper {
+	v := new(bool)
+	return m.boolVarP(nil, v, name, shorthand, value, usage, args...)
+}
+
 // Duration
 func (f cobraFlag) GetDuration() (time.Duration, bool) {
 	if p, ok := f.Raw().(*time.Duration); ok {
