@@ -80,12 +80,15 @@ func (m *CobraMapper) Parse() {
 
 // Uint16
 func (f cobraFlag) GetUint16() (uint16, bool) {
-	if p, ok := f.Raw().(*uint16); ok {
+	var v uint16
+
+	p, ok := f.Raw().(*uint16)
+	if ok {
 		ok = f.Changed()
-		return *p, ok
-	} else {
-		return 0, false
+		v = *p
 	}
+
+	return v, ok
 }
 
 func (m *CobraMapper) uint16VarP(out *uint16, v *uint16, name, shorthand string, value uint16, usage string, args ...interface{}) *CobraMapper {
@@ -109,12 +112,15 @@ func (m *CobraMapper) Uint16P(name, shorthand string, value uint16, usage string
 
 // Bool
 func (f cobraFlag) GetBool() (bool, bool) {
-	if p, ok := f.Raw().(*bool); ok {
+	var v bool
+
+	p, ok := f.Raw().(*bool)
+	if ok {
 		ok = f.Changed()
-		return *p, ok
-	} else {
-		return false, false
+		v = *p
 	}
+
+	return v, ok
 }
 
 func (m *CobraMapper) boolVarP(out *bool, v *bool, name, shorthand string, value bool, usage string, args ...interface{}) *CobraMapper {
@@ -138,12 +144,15 @@ func (m *CobraMapper) BoolP(name, shorthand string, value bool, usage string, ar
 
 // Duration
 func (f cobraFlag) GetDuration() (time.Duration, bool) {
-	if p, ok := f.Raw().(*time.Duration); ok {
+	var v time.Duration
+
+	p, ok := f.Raw().(*time.Duration)
+	if ok {
 		ok = f.Changed()
-		return *p, ok
-	} else {
-		return 0, false
+		v = *p
 	}
+
+	return v, ok
 }
 
 func (m *CobraMapper) durationVarP(out *time.Duration, v *time.Duration, name, shorthand string, value time.Duration, usage string, args ...interface{}) *CobraMapper {
