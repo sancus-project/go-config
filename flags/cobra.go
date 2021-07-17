@@ -91,23 +91,25 @@ func (f cobraFlag) GetUint16() (uint16, bool) {
 	return v, ok
 }
 
-func (m *CobraMapper) uint16VarP(out *uint16, v *uint16, name, shorthand string, value uint16, usage string, args ...interface{}) *CobraMapper {
+func (m *CobraMapper) uint16VarP(out *uint16, v *uint16, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
+	var zero uint16
+
 	if len(usage) > 0 && len(args) > 0 {
 		usage = fmt.Sprintf(usage, args...)
 	}
-	*v = value
-	m.set.Uint16VarP(v, name, shorthand, value, usage)
+	*v = zero
+	m.set.Uint16VarP(v, name, shorthand, zero, usage)
 	return m.addFlag(name, v, out)
 }
 
-func (m *CobraMapper) UintVar16P(out *uint16, name, shorthand string, value uint16, usage string, args ...interface{}) *CobraMapper {
+func (m *CobraMapper) UintVar16P(out *uint16, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
 	v := new(uint16)
-	return m.uint16VarP(out, v, name, shorthand, value, usage, args...)
+	return m.uint16VarP(out, v, name, shorthand, usage, args...)
 }
 
-func (m *CobraMapper) Uint16P(name, shorthand string, value uint16, usage string, args ...interface{}) *CobraMapper {
+func (m *CobraMapper) Uint16P(name, shorthand string, usage string, args ...interface{}) *CobraMapper {
 	v := new(uint16)
-	return m.uint16VarP(nil, v, name, shorthand, value, usage, args...)
+	return m.uint16VarP(nil, v, name, shorthand, usage, args...)
 }
 
 // Bool
@@ -123,23 +125,25 @@ func (f cobraFlag) GetBool() (bool, bool) {
 	return v, ok
 }
 
-func (m *CobraMapper) boolVarP(out *bool, v *bool, name, shorthand string, value bool, usage string, args ...interface{}) *CobraMapper {
+func (m *CobraMapper) boolVarP(out *bool, v *bool, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
+	var zero bool
+
 	if len(usage) > 0 && len(args) > 0 {
 		usage = fmt.Sprintf(usage, args...)
 	}
-	*v = value
-	m.set.BoolVarP(v, name, shorthand, value, usage)
+	*v = zero
+	m.set.BoolVarP(v, name, shorthand, zero, usage)
 	return m.addFlag(name, v, out)
 }
 
-func (m *CobraMapper) BoolVarP(out *bool, name, shorthand string, value bool, usage string, args ...interface{}) *CobraMapper {
+func (m *CobraMapper) BoolVarP(out *bool, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
 	v := new(bool)
-	return m.boolVarP(out, v, name, shorthand, value, usage, args...)
+	return m.boolVarP(out, v, name, shorthand, usage, args...)
 }
 
-func (m *CobraMapper) BoolP(name, shorthand string, value bool, usage string, args ...interface{}) *CobraMapper {
+func (m *CobraMapper) BoolP(name, shorthand string, usage string, args ...interface{}) *CobraMapper {
 	v := new(bool)
-	return m.boolVarP(nil, v, name, shorthand, value, usage, args...)
+	return m.boolVarP(nil, v, name, shorthand, usage, args...)
 }
 
 // String
@@ -155,23 +159,25 @@ func (f cobraFlag) GetString() (string, bool) {
 	return v, ok
 }
 
-func (m *CobraMapper) stringVarP(out *string, v *string, name, shorthand string, value string, usage string, args ...interface{}) *CobraMapper {
+func (m *CobraMapper) stringVarP(out *string, v *string, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
+	var zero string
+
 	if len(usage) > 0 && len(args) > 0 {
 		usage = fmt.Sprintf(usage, args...)
 	}
-	*v = value
-	m.set.StringVarP(v, name, shorthand, value, usage)
+	*v = zero
+	m.set.StringVarP(v, name, shorthand, zero, usage)
 	return m.addFlag(name, v, out)
 }
 
-func (m *CobraMapper) StringVarP(out *string, name, shorthand string, value string, usage string, args ...interface{}) *CobraMapper {
+func (m *CobraMapper) StringVarP(out *string, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
 	v := new(string)
-	return m.stringVarP(out, v, name, shorthand, value, usage, args...)
+	return m.stringVarP(out, v, name, shorthand, usage, args...)
 }
 
-func (m *CobraMapper) StringP(name, shorthand string, value string, usage string, args ...interface{}) *CobraMapper {
+func (m *CobraMapper) StringP(name, shorthand string, usage string, args ...interface{}) *CobraMapper {
 	v := new(string)
-	return m.stringVarP(nil, v, name, shorthand, value, usage, args...)
+	return m.stringVarP(nil, v, name, shorthand, usage, args...)
 }
 
 // Duration
@@ -187,20 +193,23 @@ func (f cobraFlag) GetDuration() (time.Duration, bool) {
 	return v, ok
 }
 
-func (m *CobraMapper) durationVarP(out *time.Duration, v *time.Duration, name, shorthand string, value time.Duration, usage string, args ...interface{}) *CobraMapper {
+func (m *CobraMapper) durationVarP(out *time.Duration, v *time.Duration, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
+	var zero time.Duration
+
 	if len(usage) > 0 && len(args) > 0 {
 		usage = fmt.Sprintf(usage, args...)
 	}
-	*v = value
-	m.set.DurationVarP(v, name, shorthand, value, usage)
+
+	*v = zero
+	m.set.DurationVarP(v, name, shorthand, zero, usage)
 	return m.addFlag(name, v, out)
 }
 
-func (m *CobraMapper) DurationVarP(out *time.Duration, name, shorthand string, value time.Duration, usage string, args ...interface{}) *CobraMapper {
+func (m *CobraMapper) DurationVarP(out *time.Duration, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
 	v := new(time.Duration)
-	return m.durationVarP(out, v, name, shorthand, value, usage, args...)
+	return m.durationVarP(out, v, name, shorthand, usage, args...)
 }
-func (m *CobraMapper) DurationP(name, shorthand string, value time.Duration, usage string, args ...interface{}) *CobraMapper {
+func (m *CobraMapper) DurationP(name, shorthand string, usage string, args ...interface{}) *CobraMapper {
 	v := new(time.Duration)
-	return m.durationVarP(nil, v, name, shorthand, value, usage, args...)
+	return m.durationVarP(nil, v, name, shorthand, usage, args...)
 }
