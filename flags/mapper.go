@@ -14,6 +14,9 @@ type Mapper interface {
 
 	GetUint16(name string) (uint16, bool)
 	GetDuration(name string) (time.Duration, bool)
+
+	Var(v interface{}, name string, usage string, args ...interface{}) Mapper
+	VarP(v interface{}, name string, short rune, usage string, args ...interface{}) Mapper
 }
 
 type Flag interface {

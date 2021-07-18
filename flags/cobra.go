@@ -213,3 +213,42 @@ func (m *CobraMapper) DurationP(name, shorthand string, usage string, args ...in
 	v := new(time.Duration)
 	return m.durationVarP(nil, v, name, shorthand, usage, args...)
 }
+
+// Magic
+func (m *CobraMapper) VarP(ptr interface{}, name string, short rune, usage string, args ...interface{}) Mapper {
+	if ptr != nil {
+		var shorthand string
+
+		if short != rune(0) {
+			shorthand = string(short)
+		}
+
+		if len(usage) > 0 && len(args) > 0 {
+			usage = fmt.Sprintf(usage, args...)
+		}
+
+		if out, ok := ptr.(*uint16); ok {
+			v := new(uint16)
+			m.uint16VarP(out, v, name, shorthand, usage)
+		} else if out, ok := ptr.(*bool); ok {
+			v := new(bool)
+			m.boolVarP(out, v, name, shorthand, usage)
+		} else if out, ok := ptr.(*string); ok {
+			v := new(string)
+			m.stringVarP(out, v, name, shorthand, usage)
+		} else if out, ok := ptr.(*time.Duration); ok {
+			v := new(time.Duration)
+			m.durationVarP(out, v, name, shorthand, usage)
+		} else {
+			goto fail
+		}
+		return m
+	}
+
+fail:
+	panic(ErrInvalidVarType(name, ptr))
+}
+
+func (m *CobraMapper) Var(ptr interface{}, name string, usage string, args ...interface{}) Mapper {
+	return m.VarP(ptr, name, 0, usage, args...)
+}
