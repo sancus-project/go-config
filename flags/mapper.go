@@ -23,13 +23,13 @@ type Flag interface {
 	Changed() bool
 }
 
-type mapper func(name string) Flag
+type MapperFunc func(name string) Flag
 
 type Uint16 interface {
 	GetUint16() (uint16, bool)
 }
 
-func (m mapper) GetUint16(name string) (uint16, bool) {
+func (m MapperFunc) GetUint16(name string) (uint16, bool) {
 	if f := m(name); f != nil {
 		if v, ok := f.(Uint16); ok {
 			return v.GetUint16()
@@ -42,7 +42,7 @@ type Duration interface {
 	GetDuration() (time.Duration, bool)
 }
 
-func (m mapper) GetDuration(name string) (time.Duration, bool) {
+func (m MapperFunc) GetDuration(name string) (time.Duration, bool) {
 	if f := m(name); f != nil {
 		if v, ok := f.(Duration); ok {
 			return v.GetDuration()

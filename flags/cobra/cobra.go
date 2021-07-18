@@ -1,10 +1,17 @@
-package flags
+package cobra
 
 import (
 	"fmt"
 	"time"
 
+	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+
+	"go.sancus.dev/config/flags"
+)
+
+type (
+	Command = cobra.Command
 )
 
 type cobraFlag struct {
@@ -26,26 +33,30 @@ func (f cobraFlag) Raw() interface{} {
 }
 
 type CobraMapper struct {
-	mapper
+	flags.MapperFunc
 
 	values map[string]*cobraFlag
 	set    *pflag.FlagSet
 }
 
-func NewCobraMapper(set *pflag.FlagSet) *CobraMapper {
+func NewMapper(set *pflag.FlagSet) *CobraMapper {
 	if set != nil {
 		m := &CobraMapper{
 			set:    set,
 			values: make(map[string]*cobraFlag),
 		}
-		m.mapper = m.Lookup
-		registerMapper(set, m)
+		m.MapperFunc = m.Lookup
+		flags.RegisterMapper(set, m)
 		return m
 	}
 	return nil
 }
 
-func (m *CobraMapper) Lookup(name string) Flag {
+func GetMapper(set *pflag.FlagSet) flags.Mapper {
+	return flags.GetMapper(set)
+}
+
+func (m *CobraMapper) Lookup(name string) flags.Flag {
 	if v, ok := m.values[name]; ok {
 		return v
 	}
@@ -215,7 +226,7 @@ func (m *CobraMapper) DurationP(name, shorthand string, usage string, args ...in
 }
 
 // Magic
-func (m *CobraMapper) VarP(ptr interface{}, name string, short rune, usage string, args ...interface{}) Mapper {
+func (m *CobraMapper) VarP(ptr interface{}, name string, short rune, usage string, args ...interface{}) flags.Mapper {
 	if ptr != nil {
 		var shorthand string
 
@@ -246,9 +257,9 @@ func (m *CobraMapper) VarP(ptr interface{}, name string, short rune, usage strin
 	}
 
 fail:
-	panic(ErrInvalidVarType(name, ptr))
+	panic(flags.ErrInvalidVarType(name, ptr))
 }
 
-func (m *CobraMapper) Var(ptr interface{}, name string, usage string, args ...interface{}) Mapper {
+func (m *CobraMapper) Var(ptr interface{}, name string, usage string, args ...interface{}) flags.Mapper {
 	return m.VarP(ptr, name, 0, usage, args...)
 }

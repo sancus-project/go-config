@@ -20,7 +20,7 @@ func GetMapper(set interface{}) Mapper {
 	return nil
 }
 
-func registerMapper(set interface{}, m Mapper) Mapper {
+func RegisterMapper(set interface{}, m Mapper) Mapper {
 	if m != nil && set != nil {
 		mu.Lock()
 		defer mu.Unlock()
