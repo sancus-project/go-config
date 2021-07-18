@@ -2,7 +2,10 @@
 
 GO ?= go
 
-all: fmt build
+all: generate fmt build
+
+generate:
+	$(GO) generate ./...
 
 fmt:
 	$(GO) fmt ./...
