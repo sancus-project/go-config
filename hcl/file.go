@@ -4,8 +4,9 @@ import (
 	"io"
 	"os"
 
+	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/gohcl"
-	"github.com/hashicorp/hcl/v2/hclsimple"
+	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"gopkg.in/dealancer/validate.v2"
 
@@ -15,14 +16,16 @@ import (
 //
 // HCL
 //
-func LoadReader(filename string, f io.Reader, c interface{}) error {
-	if b, err := io.ReadAll(f); err != nil {
+func LoadReader(filename string, in io.Reader, ctx *hcl.EvalContext, c interface{}) error {
+	if b, err := io.ReadAll(in); err != nil {
 		// read error
 		return errors.Wrap(err, "ReadAll")
 	} else if len(b) == 0 {
 		// empty file
 		return nil
-	} else if err := hclsimple.Decode(filename, b, nil, c); err != nil {
+	} else if f, err := hclsyntax.ParseConfig(b, filename, hcl.Pos{Line: 1, Column: 1}); err != nil {
+		return errors.Wrap(err, "ParseConfig")
+	} else if err := gohcl.DecodeBody(f.Body, ctx, c); err != nil {
 		// failed to decode
 		return errors.Wrap(err, "Decode")
 	} else if err := validate.Validate(c); err != nil {
@@ -34,11 +37,11 @@ func LoadReader(filename string, f io.Reader, c interface{}) error {
 	}
 }
 
-func LoadFile(filename string, c interface{}) error {
+func LoadFile(filename string, ctx *hcl.EvalContext, c interface{}) error {
 
 	if file, err := os.Open(filename); err != nil {
 		return err
-	} else if err := LoadReader(filename, file, c); err != nil {
+	} else if err := LoadReader(filename, file, ctx, c); err != nil {
 		return errors.Wrap(err, "Load: %q", filename)
 	} else {
 		return nil
