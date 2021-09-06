@@ -23,11 +23,11 @@ func LoadReader(filename string, in io.Reader, ctx *hcl.EvalContext, c interface
 	} else if len(b) == 0 {
 		// empty file
 		return nil
-	} else if f, err := hclsyntax.ParseConfig(b, filename, hcl.Pos{Line: 1, Column: 1}); err != nil {
-		return errors.Wrap(err, "ParseConfig")
-	} else if err := gohcl.DecodeBody(f.Body, ctx, c); err != nil {
+	} else if f, diags := hclsyntax.ParseConfig(b, filename, hcl.Pos{Line: 1, Column: 1}); diags.HasErrors() {
+		return errors.New("%s.%s: %w", "hclsyntax", "ParseConfig", diags)
+	} else if diags := gohcl.DecodeBody(f.Body, ctx, c); diags.HasErrors() {
 		// failed to decode
-		return errors.Wrap(err, "Decode")
+		return errors.New("%s.%s: %w", "gohcl", "DecodeBody", diags)
 	} else if err := validate.Validate(c); err != nil {
 		// failed to validate
 		return errors.Wrap(err, "Validate")
@@ -42,7 +42,7 @@ func LoadFile(filename string, ctx *hcl.EvalContext, c interface{}) error {
 	if file, err := os.Open(filename); err != nil {
 		return err
 	} else if err := LoadReader(filename, file, ctx, c); err != nil {
-		return errors.Wrap(err, "Load: %q", filename)
+		return errors.Wrap(err, "%T: %s: %q", c, "LoadFile", filename)
 	} else {
 		return nil
 	}
