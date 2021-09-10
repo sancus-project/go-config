@@ -4,8 +4,8 @@ import (
 	"io"
 	"os"
 
+	"github.com/goccy/go-yaml"
 	"gopkg.in/dealancer/validate.v2"
-	"gopkg.in/yaml.v2"
 
 	"go.sancus.dev/core/errors"
 )
