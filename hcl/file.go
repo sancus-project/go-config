@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/gohcl"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
-	"github.com/rodaine/hclencoder"
+	"github.com/hashicorp/hcl/v2/hclwrite"
 	"gopkg.in/dealancer/validate.v2"
 
 	"go.sancus.dev/core/errors"
@@ -49,10 +49,9 @@ func LoadFile(filename string, ctx *hcl.EvalContext, c interface{}) error {
 }
 
 func WriteTo(out io.Writer, c interface{}) (int, error) {
-	b, err := hclencoder.Encode(c)
-	if err != nil {
-		return 0, err
-	}
+	f := hclwrite.NewEmptyFile()
+	gohcl.EncodeIntoBody(c, f.Body())
 
-	return out.Write(b)
+	n, err := f.WriteTo(out)
+	return int(n), err
 }
