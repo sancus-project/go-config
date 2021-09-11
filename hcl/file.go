@@ -48,10 +48,9 @@ func LoadFile(filename string, ctx *hcl.EvalContext, c interface{}) error {
 	}
 }
 
-func WriteTo(out io.Writer, c interface{}) (int, error) {
+func WriteTo(out io.Writer, c interface{}) (int64, error) {
 	f := hclwrite.NewEmptyFile()
 	gohcl.EncodeIntoBody(c, f.Body())
 
-	n, err := f.WriteTo(out)
-	return int(n), err
+	return f.WriteTo(out)
 }

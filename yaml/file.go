@@ -43,12 +43,13 @@ func LoadFile(filename string, c interface{}) error {
 	}
 }
 
-func WriteTo(f io.Writer, c interface{}) (int, error) {
+func WriteTo(f io.Writer, c interface{}) (int64, error) {
 	b, err := yaml.Marshal(c)
 	if err != nil {
 		// encoding error
 		return 0, err
 	}
 
-	return f.Write(b)
+	n, err := f.Write(b)
+	return int64(n), err
 }
