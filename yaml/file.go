@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"gopkg.in/dealancer/validate.v2"
-	"gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v2"
 
 	"go.sancus.dev/core/errors"
 )
