@@ -7,7 +7,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.10.1
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/pflag v1.0.5
-	go.sancus.dev/core v0.14.0
+	go.sancus.dev/core v0.16.0
 	gopkg.in/dealancer/validate.v2 v2.1.0
 	gopkg.in/yaml.v2 v2.4.0
 )
