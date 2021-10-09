@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"gopkg.in/dealancer/validate.v2"
 
+	"go.sancus.dev/config"
 	"go.sancus.dev/core/errors"
 )
 
@@ -53,4 +54,18 @@ func WriteTo(out io.Writer, c interface{}) (int64, error) {
 	gohcl.EncodeIntoBody(c, f.Body())
 
 	return f.WriteTo(out)
+}
+
+func WriteFile(filename string, c interface{}, filemode os.FileMode) (int64, error) {
+	if filemode == 0 {
+		filemode = config.DefaultConfigFileMode
+	}
+
+	f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, filemode)
+	if err != nil {
+		return 0, err
+	}
+
+	defer f.Close()
+	return WriteTo(f, c)
 }

@@ -7,6 +7,7 @@ import (
 	"gopkg.in/dealancer/validate.v2"
 	"gopkg.in/yaml.v2"
 
+	"go.sancus.dev/config"
 	"go.sancus.dev/core/errors"
 )
 
@@ -52,4 +53,18 @@ func WriteTo(f io.Writer, c interface{}) (int64, error) {
 
 	n, err := f.Write(b)
 	return int64(n), err
+}
+
+func WriteFile(filename string, c interface{}, filemode os.FileMode) (int64, error) {
+	if filemode == 0 {
+		filemode = config.DefaultConfigFileMode
+	}
+
+	f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, filemode)
+	if err != nil {
+		return 0, err
+	}
+
+	defer f.Close()
+	return WriteTo(f, c)
 }
