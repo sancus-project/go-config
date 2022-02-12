@@ -4,7 +4,6 @@ import (
 	"io"
 	"os"
 
-	"gopkg.in/dealancer/validate.v2"
 	"gopkg.in/yaml.v2"
 
 	"go.sancus.dev/config"
@@ -24,7 +23,7 @@ func LoadReader(f io.Reader, c interface{}) error {
 	} else if err := yaml.Unmarshal(b, c); err != nil {
 		// failed to decode
 		return errors.Wrap(err, "Unmarshal")
-	} else if err := validate.Validate(c); err != nil {
+	} else if _, err := config.Validate(c); err != nil {
 		// failed to validate
 		return errors.Wrap(err, "Validate")
 	} else {
