@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 
 	"go.sancus.dev/config"
 	"go.sancus.dev/core/errors"
