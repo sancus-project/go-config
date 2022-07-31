@@ -11,20 +11,37 @@ import (
 	"gopkg.in/dealancer/validate.v2"
 
 	"go.sancus.dev/config"
+	"go.sancus.dev/config/expand"
 	"go.sancus.dev/core/errors"
 )
 
 //
 // HCL
 //
-func LoadReader(filename string, in io.Reader, ctx *hcl.EvalContext, c interface{}) error {
-	if b, err := io.ReadAll(in); err != nil {
-		// read error
-		return errors.Wrap(err, "ReadAll")
-	} else if len(b) == 0 {
-		// empty file
+func resolveContext(ctx *hcl.EvalContext, key string) string {
+	for ctx != nil {
+		if v, ok := ctx.Variables[key]; ok {
+			return v.AsString()
+		}
+		ctx = ctx.Parent()
+	}
+	return os.Getenv(key)
+}
+
+func getEnvHandler(ctx *hcl.EvalContext) func(string) string {
+	if ctx == nil {
 		return nil
-	} else if f, diags := hclsyntax.ParseConfig(b, filename, hcl.Pos{Line: 1, Column: 1}); diags.HasErrors() {
+	}
+
+	return func(key string) string {
+		return resolveContext(ctx, key)
+	}
+}
+
+func LoadString(filename string, s string, ctx *hcl.EvalContext, c interface{}) (err error) {
+	if s, err = expand.ExpandString(s, getEnvHandler(ctx)); err != nil || s == "" {
+		return
+	} else if f, diags := hclsyntax.ParseConfig([]byte(s), filename, hcl.Pos{Line: 1, Column: 1}); diags.HasErrors() {
 		return errors.New("%s.%s: %w", "hclsyntax", "ParseConfig", diags)
 	} else if diags := gohcl.DecodeBody(f.Body, ctx, c); diags.HasErrors() {
 		// failed to decode
@@ -38,14 +55,32 @@ func LoadReader(filename string, in io.Reader, ctx *hcl.EvalContext, c interface
 	}
 }
 
+func LoadBytes(filename string, b []byte, ctx *hcl.EvalContext, c interface{}) (err error) {
+	if len(b) == 0 {
+		// empty
+		return nil
+	}
+
+	return LoadString(filename, string(b), ctx, c)
+}
+
+func LoadReader(filename string, in io.Reader, ctx *hcl.EvalContext, c interface{}) error {
+	if b, err := io.ReadAll(in); err != nil || len(b) == 0 {
+		// read error or empty
+		return err
+	} else {
+		return LoadString(filename, string(b[:]), ctx, c)
+	}
+}
+
 func LoadFile(filename string, ctx *hcl.EvalContext, c interface{}) error {
 
-	if file, err := os.Open(filename); err != nil {
+	if f, err := os.Open(filename); err != nil {
 		return err
-	} else if err := LoadReader(filename, file, ctx, c); err != nil {
-		return errors.Wrap(err, "%T: %s: %q", c, "LoadFile", filename)
 	} else {
-		return nil
+		defer f.Close()
+
+		return LoadReader(filename, f, ctx, c)
 	}
 }
 
