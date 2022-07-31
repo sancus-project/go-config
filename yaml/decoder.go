@@ -2,6 +2,7 @@ package yaml
 
 import (
 	"io"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 
@@ -11,6 +12,11 @@ import (
 
 type Decoder struct {
 	decoder *yaml.Decoder
+}
+
+func NewStringDecoder(s string) *Decoder {
+	r := strings.NewReader(s)
+	return NewDecoder(r)
 }
 
 func NewDecoder(r io.Reader) *Decoder {
