@@ -17,6 +17,9 @@ func LoadString(s string, c interface{}) error {
 	s, err := expand.ExpandString(s, nil)
 	if err != nil {
 		return err
+	} else if s == "" {
+		// empty file
+		return nil
 	}
 
 	dec := NewStringDecoder(s)
