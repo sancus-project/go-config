@@ -2,7 +2,6 @@ package yaml
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -30,7 +29,7 @@ func LoadBytes(b []byte, c interface{}) error {
 }
 
 func LoadReader(f io.Reader, c interface{}) error {
-	b, err := ioutil.ReadAll(f)
+	b, err := io.ReadAll(f)
 	if err != nil {
 		return err
 	}

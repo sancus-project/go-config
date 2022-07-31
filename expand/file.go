@@ -2,7 +2,6 @@ package expand
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 
 	"mvdan.cc/sh/v3/shell"
@@ -21,7 +20,7 @@ func ExpandBytes(b []byte, getEnv func(string) string) (string, error) {
 }
 
 func ExpandReader(f io.Reader, getEnv func(string) string) (string, error) {
-	b, err := ioutil.ReadAll(f)
+	b, err := io.ReadAll(f)
 	if err != nil {
 		return "", err
 	}
