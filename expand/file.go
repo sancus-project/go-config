@@ -12,6 +12,11 @@ func ExpandString(s string, getEnv func(string) string) (string, error) {
 		getEnv = os.Getenv
 	}
 
+	if s == "" {
+		// empty string
+		return s, nil
+	}
+
 	return shell.Expand(s, getEnv)
 }
 
