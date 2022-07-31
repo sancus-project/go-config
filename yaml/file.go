@@ -2,20 +2,40 @@ package yaml
 
 import (
 	"io"
+	"io/ioutil"
 	"os"
 
 	"gopkg.in/yaml.v3"
 
 	"go.sancus.dev/config"
+	"go.sancus.dev/config/expand"
 )
 
 //
 // YAML
 //
-func LoadReader(f io.Reader, c interface{}) error {
-	dec := NewDecoder(f)
+func LoadString(s string, c interface{}) error {
+	s, err := expand.ExpandString(s, nil)
+	if err != nil {
+		return err
+	}
+
+	dec := NewStringDecoder(s)
 	dec.KnownFields(true)
 	return dec.Decode(c)
+}
+
+func LoadBytes(b []byte, c interface{}) error {
+	return LoadString(string(b), c)
+}
+
+func LoadReader(f io.Reader, c interface{}) error {
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		return err
+	}
+
+	return LoadString(string(b[:]), c)
 }
 
 func LoadFile(filename string, c interface{}) error {
