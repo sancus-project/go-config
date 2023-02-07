@@ -13,6 +13,10 @@ func (m *CobraMapper) Parse() {
 	for _, p := range m.values {
 		if p.out == nil {
 			// skip
+		} else if v, ok := p.GetUint(); ok {
+			// Uint
+			out := p.out.(*uint)
+			*out = v
 		} else if v, ok := p.GetUint16(); ok {
 			// Uint16
 			out := p.out.(*uint16)
@@ -20,6 +24,10 @@ func (m *CobraMapper) Parse() {
 		} else if v, ok := p.GetUint32(); ok {
 			// Uint32
 			out := p.out.(*uint32)
+			*out = v
+		} else if v, ok := p.GetInt(); ok {
+			// Int
+			out := p.out.(*int)
 			*out = v
 		} else if v, ok := p.GetInt16(); ok {
 			// Int16
@@ -59,12 +67,18 @@ func (m *CobraMapper) VarP(ptr interface{}, name string, short rune, usage strin
 
 	if ptr == nil {
 		goto fail
+	} else if out, ok := ptr.(*uint); ok {
+		v := new(uint)
+		m.uintVarP(out, v, name, shorthand, usage)
 	} else if out, ok := ptr.(*uint16); ok {
 		v := new(uint16)
 		m.uint16VarP(out, v, name, shorthand, usage)
 	} else if out, ok := ptr.(*uint32); ok {
 		v := new(uint32)
 		m.uint32VarP(out, v, name, shorthand, usage)
+	} else if out, ok := ptr.(*int); ok {
+		v := new(int)
+		m.intVarP(out, v, name, shorthand, usage)
 	} else if out, ok := ptr.(*int16); ok {
 		v := new(int16)
 		m.int16VarP(out, v, name, shorthand, usage)
@@ -91,6 +105,40 @@ fail:
 
 func (m *CobraMapper) Var(ptr interface{}, name string, usage string, args ...interface{}) flags.Mapper {
 	return m.VarP(ptr, name, 0, usage, args...)
+}
+
+// GetUint() returns a uint if the flag was used
+func (f cobraFlag) GetUint() (uint, bool) {
+	var v uint
+
+	p, ok := f.Raw().(*uint)
+	if ok {
+		ok = f.Changed()
+		v = *p
+	}
+
+	return v, ok
+}
+
+func (m *CobraMapper) uintVarP(out *uint, v *uint, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
+	var zero uint
+
+	if len(usage) > 0 && len(args) > 0 {
+		usage = fmt.Sprintf(usage, args...)
+	}
+	*v = zero
+	m.set.UintVarP(v, name, shorthand, zero, usage)
+	return m.addFlag(name, v, out)
+}
+
+func (m *CobraMapper) UintVarP(out *uint, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
+	v := new(uint)
+	return m.uintVarP(out, v, name, shorthand, usage, args...)
+}
+
+func (m *CobraMapper) UintP(name, shorthand string, usage string, args ...interface{}) *CobraMapper {
+	v := new(uint)
+	return m.uintVarP(nil, v, name, shorthand, usage, args...)
 }
 
 // GetUint16() returns a uint16 if the flag was used
@@ -159,6 +207,40 @@ func (m *CobraMapper) Uint32VarP(out *uint32, name, shorthand string, usage stri
 func (m *CobraMapper) Uint32P(name, shorthand string, usage string, args ...interface{}) *CobraMapper {
 	v := new(uint32)
 	return m.uint32VarP(nil, v, name, shorthand, usage, args...)
+}
+
+// GetInt() returns a int if the flag was used
+func (f cobraFlag) GetInt() (int, bool) {
+	var v int
+
+	p, ok := f.Raw().(*int)
+	if ok {
+		ok = f.Changed()
+		v = *p
+	}
+
+	return v, ok
+}
+
+func (m *CobraMapper) intVarP(out *int, v *int, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
+	var zero int
+
+	if len(usage) > 0 && len(args) > 0 {
+		usage = fmt.Sprintf(usage, args...)
+	}
+	*v = zero
+	m.set.IntVarP(v, name, shorthand, zero, usage)
+	return m.addFlag(name, v, out)
+}
+
+func (m *CobraMapper) IntVarP(out *int, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
+	v := new(int)
+	return m.intVarP(out, v, name, shorthand, usage, args...)
+}
+
+func (m *CobraMapper) IntP(name, shorthand string, usage string, args ...interface{}) *CobraMapper {
+	v := new(int)
+	return m.intVarP(nil, v, name, shorthand, usage, args...)
 }
 
 // GetInt16() returns a int16 if the flag was used

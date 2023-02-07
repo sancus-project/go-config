@@ -5,6 +5,24 @@ import (
 	"time"
 )
 
+// Uint is a flag of type uint
+type Uint interface {
+	GetUint() (uint, bool)
+}
+
+// GetUint tries to find a field of a given name and return a uint
+func (m MapperFunc) GetUint(name string) (uint, bool) {
+	var zero uint
+
+	if f := m(name); f != nil {
+		if v, ok := f.(Uint); ok {
+			return v.GetUint()
+		}
+	}
+
+	return zero, false
+}
+
 // Uint16 is a flag of type uint16
 type Uint16 interface {
 	GetUint16() (uint16, bool)
@@ -35,6 +53,24 @@ func (m MapperFunc) GetUint32(name string) (uint32, bool) {
 	if f := m(name); f != nil {
 		if v, ok := f.(Uint32); ok {
 			return v.GetUint32()
+		}
+	}
+
+	return zero, false
+}
+
+// Int is a flag of type int
+type Int interface {
+	GetInt() (int, bool)
+}
+
+// GetInt tries to find a field of a given name and return a int
+func (m MapperFunc) GetInt(name string) (int, bool) {
+	var zero int
+
+	if f := m(name); f != nil {
+		if v, ok := f.(Int); ok {
+			return v.GetInt()
 		}
 	}
 

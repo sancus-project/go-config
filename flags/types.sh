@@ -6,8 +6,10 @@ if [ -n "$GOFILE" ]; then
 fi
 
 TYPES="
+Uint
 Uint16
 Uint32
+Int
 Int16
 Int32
 Bool
