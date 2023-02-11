@@ -14,6 +14,7 @@ Int16
 Int32
 Bool
 String
+StringSlice:[]string
 Duration:time.Duration
 "
 

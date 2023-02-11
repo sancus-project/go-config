@@ -45,6 +45,10 @@ func (m *CobraMapper) Parse() {
 			// String
 			out := p.out.(*string)
 			*out = v
+		} else if v, ok := p.GetStringSlice(); ok {
+			// StringSlice
+			out := p.out.(*[]string)
+			*out = v
 		} else if v, ok := p.GetDuration(); ok {
 			// Duration
 			out := p.out.(*time.Duration)
@@ -91,6 +95,9 @@ func (m *CobraMapper) VarP(ptr interface{}, name string, short rune, usage strin
 	} else if out, ok := ptr.(*string); ok {
 		v := new(string)
 		m.stringVarP(out, v, name, shorthand, usage)
+	} else if out, ok := ptr.(*[]string); ok {
+		v := new([]string)
+		m.stringsliceVarP(out, v, name, shorthand, usage)
 	} else if out, ok := ptr.(*time.Duration); ok {
 		v := new(time.Duration)
 		m.durationVarP(out, v, name, shorthand, usage)
@@ -377,6 +384,40 @@ func (m *CobraMapper) StringVarP(out *string, name, shorthand string, usage stri
 func (m *CobraMapper) StringP(name, shorthand string, usage string, args ...interface{}) *CobraMapper {
 	v := new(string)
 	return m.stringVarP(nil, v, name, shorthand, usage, args...)
+}
+
+// GetStringSlice() returns a []string if the flag was used
+func (f cobraFlag) GetStringSlice() ([]string, bool) {
+	var v []string
+
+	p, ok := f.Raw().(*[]string)
+	if ok {
+		ok = f.Changed()
+		v = *p
+	}
+
+	return v, ok
+}
+
+func (m *CobraMapper) stringsliceVarP(out *[]string, v *[]string, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
+	var zero []string
+
+	if len(usage) > 0 && len(args) > 0 {
+		usage = fmt.Sprintf(usage, args...)
+	}
+	*v = zero
+	m.set.StringSliceVarP(v, name, shorthand, zero, usage)
+	return m.addFlag(name, v, out)
+}
+
+func (m *CobraMapper) StringSliceVarP(out *[]string, name, shorthand string, usage string, args ...interface{}) *CobraMapper {
+	v := new([]string)
+	return m.stringsliceVarP(out, v, name, shorthand, usage, args...)
+}
+
+func (m *CobraMapper) StringSliceP(name, shorthand string, usage string, args ...interface{}) *CobraMapper {
+	v := new([]string)
+	return m.stringsliceVarP(nil, v, name, shorthand, usage, args...)
 }
 
 // GetDuration() returns a time.Duration if the flag was used

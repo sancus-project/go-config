@@ -149,6 +149,24 @@ func (m MapperFunc) GetString(name string) (string, bool) {
 	return zero, false
 }
 
+// StringSlice is a flag of type []string
+type StringSlice interface {
+	GetStringSlice() ([]string, bool)
+}
+
+// GetStringSlice tries to find a field of a given name and return a []string
+func (m MapperFunc) GetStringSlice(name string) ([]string, bool) {
+	var zero []string
+
+	if f := m(name); f != nil {
+		if v, ok := f.(StringSlice); ok {
+			return v.GetStringSlice()
+		}
+	}
+
+	return zero, false
+}
+
 // Duration is a flag of type time.Duration
 type Duration interface {
 	GetDuration() (time.Duration, bool)
