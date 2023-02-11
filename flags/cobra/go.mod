@@ -2,10 +2,7 @@ module go.sancus.dev/config/flags/cobra
 
 go 1.16
 
-replace (
-	go.sancus.dev/config => ../..
-	go.sancus.dev/config/expand => ../../expand
-)
+replace go.sancus.dev/config => ../..
 
 require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
