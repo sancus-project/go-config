@@ -13,4 +13,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-require go.sancus.dev/config/expand v0.0.0-00010101000000-000000000000
+require go.sancus.dev/config/expand v0.1.0

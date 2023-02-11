@@ -10,7 +10,7 @@ replace (
 require (
 	github.com/hashicorp/hcl/v2 v2.16.0
 	go.sancus.dev/config v0.10.3
-	go.sancus.dev/config/expand v0.0.0-00010101000000-000000000000
+	go.sancus.dev/config/expand v0.1.0
 	go.sancus.dev/core v0.18.1
 	gopkg.in/dealancer/validate.v2 v2.1.0
 )
